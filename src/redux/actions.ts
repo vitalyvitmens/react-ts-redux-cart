@@ -56,6 +56,9 @@ export function createOrderAction(): ThunkAction<
   return async (dispatch) => {
     dispatch({ type: CREATE_ORDER_ACTION })
 
+    //! создай фейковый api по адресу https://mocki.io/
+    //! в textarea вставь {"success": true} и нажми Create API
+    //! скопируй сгенерированный адрес и вставь в функцию fetch
     const res = await fetch(
       'https://mocki.io/v1/909c7add-6fdf-4ee0-ac14-16147d1f3a0f'
     )
