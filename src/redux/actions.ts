@@ -1,7 +1,25 @@
+import { ThunkAction } from 'redux-thunk'
 import { IProduct } from '../types/IProduct'
+import { RootState } from './store'
 
 export const INCREASE_QUANTITY_ACTION = 'INCREASE_QUANTITY_ACTION'
 export const DECREASE_QUANTITY_ACTION = 'DECREASE_QUANTITY_ACTION'
+
+export const CREATE_ORDER_ACTION = 'CREATE_ORDER_ACTION'
+export const CREATE_ORDER_SUCCESS_ACTION = 'CREATE_ORDER_SUCCESS_ACTION'
+export const RESET_ORDER_ACTION = 'RESET_ORDER_ACTION'
+
+interface CreateOrderAction {
+  type: typeof CREATE_ORDER_ACTION
+}
+
+interface CreateOrderSuccessAction {
+  type: typeof CREATE_ORDER_SUCCESS_ACTION
+}
+
+interface ResetOrderAction {
+  type: typeof RESET_ORDER_ACTION
+}
 
 interface IncreaseQuantityAction {
   type: typeof INCREASE_QUANTITY_ACTION
@@ -29,4 +47,31 @@ export function decreaseQuantityActionCreator(
   return { type: DECREASE_QUANTITY_ACTION, payload: { id } }
 }
 
-export type ProjectActions = IncreaseQuantityAction | DecreaseQuantityAction
+export function createOrderAction(): ThunkAction<
+  void,
+  RootState,
+  void,
+  ProjectActions
+> {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_ORDER_ACTION })
+
+    const res = await fetch(
+      'https://mocki.io/v1/909c7add-6fdf-4ee0-ac14-16147d1f3a0f'
+    )
+    const data = await res.json()
+
+    if (data.success) {
+      dispatch({ type: CREATE_ORDER_SUCCESS_ACTION })
+    } else {
+      dispatch({ type: RESET_ORDER_ACTION })
+    }
+  }
+}
+
+export type ProjectActions =
+  | IncreaseQuantityAction
+  | DecreaseQuantityAction
+  | CreateOrderAction
+  | CreateOrderSuccessAction
+  | ResetOrderAction
