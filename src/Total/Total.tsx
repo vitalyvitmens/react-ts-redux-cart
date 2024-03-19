@@ -1,24 +1,26 @@
+import { useMemo } from 'react'
 import { createOrderAction } from '../redux/actions'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { round } from '../utils'
 
 export function Total() {
-  const total = useAppSelector((state) => {
-    const subtotal = state.products.reduce((acc, product) => {
-      return acc + product.price * product.quantity
-    }, 0)
-    const tax = subtotal * 0.13
-    const total = subtotal + tax
+  const products = useAppSelector((state) => state.products)
+  const orderLoading = useAppSelector((state) => state.order.loading)
 
+  const total = useMemo(() => {
+    const subtotal = products.reduce(
+      (acc, product) => acc + product.price * product.quantity,
+      0
+    )
+    const tax = subtotal * 0.13
     return {
       subtotal: round(subtotal),
       tax: round(tax),
-      total: round(total),
+      total: round(subtotal + tax),
     }
-  })
+  }, [products])
 
   const dispatch = useAppDispatch()
-  const disableBuyButton = useAppSelector((state) => state.order.loading)
 
   return (
     <table className="bill">
@@ -39,7 +41,7 @@ export function Total() {
           <td colSpan={2} className="button-cell">
             <button
               className="main-button"
-              disabled={disableBuyButton}
+              disabled={orderLoading}
               onClick={() => dispatch(createOrderAction())}
             >
               Buy
